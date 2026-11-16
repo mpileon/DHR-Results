@@ -1,0 +1,112 @@
+{
+  "drivers": {
+    "Chris James": {
+      "car_num": "82",
+      "wins": 1,
+      "starts": 1,
+      "pts": 40,
+      "best_fin": 1
+    },
+    "Maddox Carnell": {
+      "car_num": "1",
+      "wins": 0,
+      "starts": 1,
+      "pts": 35,
+      "best_fin": 2
+    },
+    "Dennis Palma": {
+      "car_num": "8",
+      "wins": 0,
+      "starts": 1,
+      "pts": 34,
+      "best_fin": 3
+    },
+    "Phillippe Goff": {
+      "car_num": "79",
+      "wins": 0,
+      "starts": 1,
+      "pts": 33,
+      "best_fin": 4
+    },
+    "Alexander Acosta": {
+      "car_num": "13",
+      "wins": 0,
+      "starts": 1,
+      "pts": 32,
+      "best_fin": 5
+    },
+    "Mason Wagoner": {
+      "car_num": "81",
+      "wins": 0,
+      "starts": 1,
+      "pts": 31,
+      "best_fin": 6
+    },
+    "Skylar Ward": {
+      "car_num": "80",
+      "wins": 0,
+      "starts": 1,
+      "pts": 30,
+      "best_fin": 7
+    },
+    "Thomas Coonan": {
+      "car_num": "99",
+      "wins": 0,
+      "starts": 1,
+      "pts": 29,
+      "best_fin": 8
+    },
+    "Jt Huskins": {
+      "car_num": "45",
+      "wins": 0,
+      "starts": 1,
+      "pts": 28,
+      "best_fin": 9
+    },
+    "Andrew Cooper": {
+      "car_num": "69",
+      "wins": 0,
+      "starts": 1,
+      "pts": 27,
+      "best_fin": 10
+    },
+    "Dan Henson": {
+      "car_num": "22",
+      "wins": 0,
+      "starts": 1,
+      "pts": 26,
+      "best_fin": 11
+    },
+    "Colby Call": {
+      "car_num": "77",
+      "wins": 0,
+      "starts": 1,
+      "pts": 25,
+      "best_fin": 12
+    },
+    "Matt Pileon": {
+      "car_num": "64",
+      "wins": 0,
+      "starts": 1,
+      "pts": 24,
+      "best_fin": 13
+    },
+    "Reno Banks": {
+      "car_num": "11",
+      "wins": 0,
+      "starts": 1,
+      "pts": 23,
+      "best_fin": 14
+    }
+  },
+  "winners": [
+    {
+      "label": "Race 1 \u2014 Texas Motor Speedway",
+      "driver": "Chris James",
+      "car_num": "82"
+    }
+  ],
+  "processed_files": [
+    "eventresult_90149823_0.csv"
+  ]
+}
