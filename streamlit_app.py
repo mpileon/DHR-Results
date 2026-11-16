@@ -73,10 +73,8 @@ def parse_lap_time_str(time_val):
         return 999999.0
 
 
-def parse_csv_bytes(raw_bytes):
-    text = raw_bytes.decode("utf-8-sig", errors="ignore")
+def parse_csv_text(text: str):
     raw_lines = [line.strip() for line in text.splitlines() if line.strip()]
-
     if not raw_lines:
         return [], ""
 
@@ -137,8 +135,8 @@ def parse_csv_bytes(raw_bytes):
     return drivers, meta_blob
 
 
-def parse_json_bytes(raw_bytes):
-    data = json.loads(raw_bytes.decode("utf-8"))
+def parse_json_text(text: str):
+    data = json.loads(text)
     meta_blob = ""
     race_results = []
 
@@ -183,6 +181,14 @@ def parse_json_bytes(raw_bytes):
 
     drivers.sort(key=lambda d: d["pos"])
     return drivers, meta_blob
+
+
+def parse_any_payload(raw_text: str):
+    """Auto-detects whether raw text is JSON or CSV and parses it."""
+    stripped = raw_text.lstrip()
+    if stripped.startswith("{") or stripped.startswith("["):
+        return parse_json_text(stripped)
+    return parse_csv_text(raw_text)
 
 
 def detect_hosted_banner(meta_blob: str) -> str:
@@ -252,24 +258,44 @@ selected_series = st.radio(
     horizontal=True
 )
 
-uploaded_file = st.file_uploader(
-    "Upload iRacing Export File (.csv or .json)",
-    type=["csv", "json"]
-)
+# --- INPUT TABS: DRAG-AND-DROP FILE vs PASTE RAW TEXT ---
+tab_upload, tab_paste = st.tabs([
+    "📁 Drag & Drop CSV / JSON File",
+    "📋 Paste Raw CSV / JSON Text"
+])
 
-if uploaded_file is not None:
-    raw_bytes = uploaded_file.getvalue()
-    if uploaded_file.name.lower().endswith(".csv"):
-        drivers, meta_blob = parse_csv_bytes(raw_bytes)
-    else:
-        drivers, meta_blob = parse_json_bytes(raw_bytes)
+raw_input_text = ""
+detected_sub_id = "Official Event"
 
-    # Auto-detect Subsession ID from filename
-    detected_sub_id = "Official Event"
-    for part in uploaded_file.name.split("_"):
-        if part.isdigit() and len(part) >= 7:
-            detected_sub_id = part
-            break
+with tab_upload:
+    uploaded_file = st.file_uploader(
+        "Drag the CSV/JSON file here (or click Browse files)",
+        type=["csv", "json"],
+        key="file_uploader_input"
+    )
+    if uploaded_file is not None:
+        raw_input_text = uploaded_file.getvalue().decode("utf-8-sig", errors="ignore")
+        for part in uploaded_file.name.split("_"):
+            if part.isdigit() and len(part) >= 7:
+                detected_sub_id = part
+                break
+
+with tab_paste:
+    pasted_text = st.text_area(
+        "Paste raw CSV or JSON text directly below:",
+        height=200,
+        placeholder='Start Time,Track,Series,Hosted Session Name\n"2026-11-16T00:00:35Z","Texas Motor Speedway - Oval",...',
+        key="raw_text_input"
+    )
+    if pasted_text.strip() and not raw_input_text:
+        raw_input_text = pasted_text
+
+if raw_input_text.strip():
+    try:
+        drivers, meta_blob = parse_any_payload(raw_input_text)
+    except Exception as parse_err:
+        st.error(f"❌ Error reading CSV/JSON data: {parse_err}")
+        st.stop()
 
     subsession_id = st.text_input("Subsession ID:", value=detected_sub_id)
 
@@ -286,7 +312,7 @@ if uploaded_file is not None:
         chosen_hosted_banner = HOSTED_BANNER_OPTIONS[chosen_label]
 
     if not drivers:
-        st.error("❌ Could not parse any driver results from that file.")
+        st.error("❌ Could not parse any driver results from that input. Check that the header row is included.")
         st.stop()
 
     # Calculate Awards & Metrics
