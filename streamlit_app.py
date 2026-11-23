@@ -675,19 +675,30 @@ if raw_input_text.strip():
             key=lambda x: (-x[1]["pts"], -x[1]["wins"], x[1].get("last_fin", 99), x[1]["starts"])
         )
 
-        std_lines = ["POS | DRIVER | WINS | STARTS | PTS"]
+        # --- CRISP MONOSPACED STANDINGS TABLE (Never wraps in Discord) ---
+        table_lines = [
+            "```text",
+            "POS  #    DRIVER             W  S   PTS",
+            "-" * 41
+        ]
         for idx, (d_name, d_info) in enumerate(sorted_drivers, 1):
-            tag = format_car_tag(d_info["car_num"])
-            std_lines.append(f"{idx} | {tag} **{d_name}** | {d_info['wins']} | {d_info['starts']} | **{d_info['pts']}**")
+            c_num = f"#{d_info['car_num']}"
+            clean_d = d_name[:17]
+            wins_s = str(d_info["wins"])
+            starts_s = str(d_info["starts"])
+            pts_s = str(d_info["pts"])
+            table_lines.append(f"{idx:<4} {c_num:<4} {clean_d:<18} {wins_s:<2} {starts_s:<3} {pts_s}")
+        table_lines.append("```")
 
-        std_lines.append("\n━━━━━━━━━━━━━━━━━━━━\n")
-        std_lines.append("🏁 **Season 2 Race Winners**\n")
+        winners_lines = ["\n🏁 **Season 2 Race Winners**\n"]
         for wb in base_winners:
-            std_lines.append(f"{wb}\n")
+            # Ensure clean two-line spacing per winner
+            clean_wb = wb.replace(" 🏆", "\n\n🏆").strip()
+            winners_lines.append(f"{clean_wb}\n")
         if winner_entry:
-            std_lines.append(winner_entry)
+            winners_lines.append(winner_entry)
 
-        final_standings_desc = "\n".join(std_lines).strip()
+        final_standings_desc = "\n".join(table_lines + winners_lines).strip()
 
         with st.expander("📊 Preview Updated Championship Standings", expanded=True):
             st.markdown(final_standings_desc)
